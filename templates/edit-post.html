@@ -1,0 +1,92 @@
+{% extends "base.html" %} {% from "bootstrap5/form.html" import render_form %}
+{% block title %}New Post{% endblock %}
+
+{% block head %}
+<!--no css-->
+  <style>
+    #hero {
+      background: url("../static/images/purple_dark_theme.jpg") no-repeat center center;
+      background-size: cover; /* Ensures the image scales proportionally */
+      width: 100%; /* Stretches to the full width of the container */
+      height: 100vh; /* Takes the full height of the viewport */ /* Set the height to 100% of the viewport height */
+      display: flex;
+      justify-content: center; /* Align content horizontally */
+      align-items: center; /* Align content vertically */
+      position: relative; /* Optional: for positioning elements inside */
+    }
+    /* Custom Label Styling */
+  .custom-label {
+    letter-spacing: 1px;   /* Adds space between letters */
+    line-height: 1.5;      /* Increases line height */
+    font-weight: bold;     /* Makes the text bold */
+    border: none;          /* Removes border */
+    font-size: 1.5rem;
+  }
+  </style>
+{% endblock %}
+
+{% block content %}
+  {{ ckeditor.load() }}  <!-- ✅ Load CKEditor -->
+  {{ ckeditor.config(name='body') }}
+  <header id="hero">
+    <div class="px-4 py-5 my-5 text-center">
+      <h1 class="display-5 fw-bold text-increase  yrsa-text">EDIT POST</h1>
+      <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4 fw-bold slogan text-body-emphasis">"Add some Masala"</p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        </div>
+      </div>
+    </div>
+  </header>
+  <section id="blogs">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2 blog-card">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+
+                    <!-- Title Field -->
+                    <div class="mb-3">
+                        {{ form.title.label(class="form-label custom-label") }}
+                        {{ form.title(class="form-control") }}
+                    </div>
+
+                    <!-- Subtitle Field -->
+                    <div class="mb-3">
+                        {{ form.subtitle.label(class="form-label custom-label") }}
+                        {{ form.subtitle(class="form-control") }}
+                    </div>
+
+                    <!-- Author Field -->
+                    <div class="mb-3">
+                        {{ form.author.label(class="form-label custom-label") }}
+                        {{ form.author(class="form-control") }}
+                    </div>
+
+                    <!-- Image URL Field -->
+                    <div class="mb-3">
+                        {{ form.img_url.label(class="form-label custom-label") }}
+                        {{ form.img_url(class="form-control") }}
+                    </div>
+
+                    <!-- CKEditor Body Field -->
+                    <div class="mb-3">
+                        {{ form.body.label(class="form-label custom-label") }}
+                        {{ form.body(class="form-control") }}
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-end custom-btn mb-4">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<!--no scripts-->
+{% endblock %}

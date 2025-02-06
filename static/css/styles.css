@@ -1,0 +1,194 @@
+/* Navbar styles */
+.navbar {
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link {
+    color: white; /* Ensures text color is white */
+    margin-right: 15px; /* Adds spacing between nav items */
+    font-size: 1rem; /* Adjusts font size */
+    transition: color 0.3s ease; /* Smooth transition for hover */
+}
+
+.menu {
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #ffcc00; /* Highlight color on hover */
+    transform: scale(1.1); /* Slight zoom effect */
+}
+
+.navbar-brand {
+    color: white; /* Navbar brand text color */
+    font-size: 1.2rem; /* Larger font size for the brand */
+}
+
+/* Updated media query for collapsible menu at screens less than 768px */
+@media (max-width: 768px) {
+    .navbar {
+        background-color: white !important; /* Ensures white navbar on small screens */
+        padding: 10px; /* Adds padding for better spacing */
+    }
+
+    .navbar-brand {
+        color: black;
+    }
+
+    .navbar-nav .nav-link {
+        color: black;
+        margin-right: 0; /* Removes margin between nav items on small screens */
+        text-align: start; /* Aligns nav links to the start */
+        transition: color 0.3s ease; /* Smooth transition for hover */
+    }
+
+    .navbar-nav .nav-link:hover {
+        color: #ffcc00; /* Highlight color on hover for small screens */
+        transform: scale(1.025);
+    }
+}
+
+/* Default navbar styles */
+#navbar {
+    transition: background 0.5s ease; /* Smooth transition for background change */
+}
+
+/* Radial gradient background for desktop screens when scrolled */
+#navbar.scrolled {
+    background: radial-gradient(circle, #222831 30%, #31363F 80%, #76ABAE 100%);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+@media (max-width: 768px) {
+    #navbar.scrolled {
+        background: none; /* No gradient background on mobile screens */
+    }
+}
+
+/* Button (toggler) styles */
+.navbar-toggler.collapsed:focus {
+    outline: none; /* Remove focus outline */
+    box-shadow: none; /* Remove the glow effect */
+}
+@media (min-width: 576px) {
+    #navbar .container,
+    #navbar .container-sm {
+        max-width: 100% !important;
+    }
+
+}
+
+/* Navbar brand logo */
+.brand-logo {
+    height: 30px; /* Adjust height as needed */
+    width: auto;
+    border-radius : 25px;
+    margin-right: 10px; /* Spacing between the logo and text */
+    vertical-align: middle; /* Align the logo with the text */
+}
+.slogan {
+    letter-spacing : 2px;
+}
+/*--------*/
+
+/* hero */
+#hero {
+    background: url("../images/purple_dark_theme.jpg") no-repeat center center;
+    background-size: cover; /* Ensures the image scales proportionally */
+    width: 100%; /* Stretches to the full width of the container */
+    height: 100vh; /* Takes the full height of the viewport */ /* Set the height to 100% of the viewport height */
+    display: flex;
+    justify-content: center; /* Align content horizontally */
+    align-items: center; /* Align content vertically */
+    position: relative; /* Optional: for positioning elements inside */
+}
+#hero .text-center {
+    z-index: 2; /* Ensure text is above the image */
+    color: white; /* Make text stand out on top of the image */
+}
+/*--------*/
+
+/*divider*/
+.b-example-divider {
+    width: 100%;
+    height: 1rem;
+    background-color: rgba(0, 0, 0, 0);
+    border: solid rgba(0, 0, 0, .15);
+    border-width: 1px 0;
+    box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+}
+/*--------*/
+
+/*important*/
+.text-increase {
+    font-size: clamp(4rem, 10vw, 8rem);
+}
+#blogs{
+    padding-top: 50px;
+    background-color: #F6F4F0;
+}
+.yrsa-text {
+    font-family: "Yrsa", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+  }
+/*--------*/
+
+/*footer*/
+a.mx-3 {
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
+  color: #6c757d; /* Default muted color */
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+a.mx-3:hover {
+  transform: scale(1.2); /* Slightly enlarge the icon on hover */
+}
+
+a.mx-3 i {
+  transition: color 0.3s ease;
+}
+
+/* Fill effect for each social icon */
+a[href*="facebook"]:hover i {
+  color: #1877f2; /* Facebook's brand color */
+}
+
+a[href*="linkedin"]:hover i {
+  color: #0a66c2; /* LinkedIn's brand color */
+}
+
+a[href*="github"]:hover i {
+  color: #333; /* GitHub's brand color */
+}
+
+
+/* <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const contactHeading = document.querySelector("#hero h1");
+    const form = document.querySelector("form");
+    const submitButton = form.querySelector("button[type='submit']");
+    if (contactHeading && form && submitButton) {
+      submitButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+        contactHeading.textContent = "Successfully Contacted";
+        form.reset();
+        setTimeout(() => {
+          contactHeading.textContent = "CONTACT ME";
+        }, 2000);
+      });
+    } else {
+      console.error("Required elements (heading, form, or button) not found!");
+    }
+  });
+</script> */

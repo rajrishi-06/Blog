@@ -1,0 +1,72 @@
+
+{% extends "base.html" %}
+
+{% block title %}About Me{% endblock %}
+
+{% block head %}
+  <style>
+    #hero {
+      background: url("../static/images/roses_darkened.jpg") no-repeat center center;
+      background-size: cover; /* Ensures the image scales proportionally */
+      width: 100%; /* Stretches to the full width of the container */
+      height: 100vh; /* Takes the full height of the viewport */ /* Set the height to 100% of the viewport height */
+      display: flex;
+      justify-content: center; /* Align content horizontally */
+      align-items: center; /* Align content vertically */
+      position: relative; /* Optional: for positioning elements inside */
+    }
+    .blog-card {
+      letter-spacing:1px;
+      line-height: 15;
+      border: none;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+  </style>
+
+{% endblock %}
+
+{% block content %}
+  <header id="hero">
+    <div class="px-4 py-5 my-5 text-center">
+      <h1 class="display-5 fw-bold text-increase  yrsa-text">About Me</h1>
+      <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4 fw-bold slogan text-body-emphasis">"This is what i do."</p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Blogs Section -->
+  <section id="blogs">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 offset-md-2 blog-card">
+          <h5>easiufg lfgaehjfw egfulwe,fglwefvsamdfjlsdgcul fguflga.fuglufgaelfyrfbjlhb ufgpufgwuifgao g fiuwgfluiwrgfulgf
+              easiufg lfgaehjfw egfulwe,fglwefvsamdfjlsdgcul fguflga.fuglufgaelfyrfbjlhb ufgpufgwuifgao g fiuwgfluiwrgfulgf
+              easiufg lfgaehjfw egfulwe,fglwefvsamdfjlsdgcul fguflga.fuglufgaelfyrfbjlhb ufgpufgwuifgao g fiuwgfluiwrgfulgf
+              easiufg lfgaehjfw egfulwe,fglwefvsamdfjlsdgcul fguflga.fuglufgaelfyrfbjlhb ufgpufgwuifgao g fiuwgfluiwrgfulgf
+              easiufg lfgaehjfw egfulwe,fglwefvsamdfjlsdgcul fguflga.fuglufgaelfyrfbjlhb ufgpufgwuifgao g fiuwgfluiwrgfulgf
+              <br>
+              easiufg lfgaehjfw egfulwe,fglwefvsamdfjlsdgcul fguflga.fuglufgaelfyrfbjlhb ufgpufgwuifgao g fiuwgfluiwrgfulgf
+              easiufg lfgaehjfw egfulwe,fglwefvsamdfjlsdgcul fguflga.fuglufgaelfyrfbjlhb ufgpufgwuifgao g fiuwgfluiwrgfulgf
+              easiufg lfgaehjfw egfulwe,fglwefvsamdfjlsdgcul fguflga.fuglufgaelfyrfbjlhb ufgpufgwuifgao g fiuwgfluiwrgfulgf
+              easiufg lfgaehjfw egfulwe,fglwefvsamdfjlsdgcul fguflga.fuglufgaelfyrfbjlhb ufgpufgwuifgao g fiuwgfluiwrgfulgf
+              easiufg lfgaehjfw egfulwe,fglwefvsamdfjlsdgcul fguflga.fuglufgaelfyrfbjlhb ufgpufgwuifgao g fiuwgfluiwrgfulgf
+              easiufg lfgaehjfw egfulwe,fglwefvsamdfjlsdgcul fguflga.fuglufgaelfyrfbjlhb ufgpufgwuifgao g fiuwgfluiwrgfulgf
+              <br>
+              easiufg lfgaehjfw egfulwe,fglwefvsamdfjlsdgcul fguflga.fuglufgaelfyrfbjlhb ufgpufgwuifgao g fiuwgfluiwrgfulgf
+              easiufg lfgaehjfw egfulwe,fglwefvsamdfjlsdgcul fguflga.fuglufgaelfyrfbjlhb ufgpufgwuifgao g fiuwgfluiwrgfulgf
+              easiufg lfgaehjfw egfulwe,fglwefvsamdfjlsdgcul fguflga.fuglufgaelfyrfbjlhb ufgpufgwuifgao g fiuwgfluiwrgfulgf
+          </h5>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+<!--no scripts-->
+{% endblock %}
+

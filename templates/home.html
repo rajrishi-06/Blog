@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Home - My Blogs{% endblock %}
+
+{% block head %}
+  <style>
+    .blog-card {
+      cursor: pointer;
+      border: none; /* Remove borders */
+      border-radius: 8px;
+<!--      padding: 15px;-->
+      margin-bottom: 10px;
+      transition: background-color 0.2s ease, color 0.2s ease; /* Faster transition */
+    }
+
+    .blog-card h1,
+    .blog-card h2 {
+      transition: color 0.2s ease; /* Faster transition for headings only */
+      color: #000; /* Default text color */
+    }
+
+    .blog-card:hover h1,
+    .blog-card:hover h2 {
+      color: #007bff; /* Change text color to blue for headings */
+    }
+
+    .blog-card p {
+      color: #333; /* Paragraph text stays the same */
+    }
+
+    .card-separator {
+      border: none;
+      height: 2px; /* Slightly thicker line */
+      background-color: #007bff; /* Make the line clearly visible (blue) */
+      margin: 20px 0; /* Add spacing for better separation */
+    }
+    #hero {
+      background: url("../static/images/purple_dark_theme.jpg") no-repeat center center;
+      background-size: cover; /* Ensures the image scales proportionally */
+      width: 100%; /* Stretches to the full width of the container */
+      height: 100vh; /* Takes the full height of the viewport */ /* Set the height to 100% of the viewport height */
+      display: flex;
+      justify-content: center; /* Align content horizontally */
+      align-items: center; /* Align content vertically */
+      position: relative; /* Optional: for positioning elements inside */
+    }
+    .custom-btn {
+      background-color: #007bff; /* Primary Blue */
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      margin: 20px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 8px; /* Rounded corners */
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .custom-btn:hover {
+      background-color: #0056b3; /* Darker Blue */
+      transform: scale(1.05);
+    }
+
+    .custom-btn:active {
+      transform: scale(0.98);
+    }
+    .delete {
+    font-size: 18px;      /* Size of the ⛌ icon */
+    color: black;         /* Set the initial color to black */
+    cursor: pointer;      /* Change the cursor to a pointer when hovering */
+    transition: color 0.3s ease, transform 0.3s ease; /* Smooth transition for color and scaling */
+  }
+
+  .delete:hover {
+    color: blue;          /* Change color to blue on hover */
+    transform: scale(10); /* Enlarge the icon when hovered */
+  }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <!-- Hero Section -->
+  <header id="hero">
+    <div class="px-4 py-5 my-5 text-center">
+      <h1 class="display-5 fw-bold text-increase  yrsa-text">RISHI's BLOG</h1>
+      <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4 fw-bold slogan text-body-emphasis">"A SPACE FOR EVERY THOUGHT"</p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- Blogs Section -->
+  <section id="blogs">
+    <div class="container pt-5">
+      <div class="row">
+        {% for blog_post in posts %}
+        <div class="col-md-8 offset-md-2">
+          <div class="blog-card" data-url="{{ url_for('blog', post_id=blog_post.id ) }}" ><h1 class="fw-bold">{{ blog_post.title }}</h1>
+          <h2 class="yrsa-text">{{ blog_post.subtitle }}</h2></div>
+        </div>
+        <div class="col-md-8 offset-md-2">
+          <p class="yrsa-text">Posted by {{ blog_post.author }} on {{ blog_post.date }}.
+            <span class="delete"
+      onclick="window.location.href='{{ url_for('delete', post_id=blog_post.id) }}'">⛌</span>
+          </p>
+          {% if not loop.last %}
+          <hr class="card-separator" />
+          {% endif %}
+        </div>
+        {% endfor %}
+        <!-- Button wrapped in a div for alignment -->
+            <div class="col-md-8 offset-md-2 text-end">
+                <button class="btn btn-primary custom-btn" onclick="window.location.href='{{ url_for('make_post') }}'">
+                    Create New Post
+                </button>
+            </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+<!--script for blog hovering-->
+  <script>
+    document.addEventListener('click', function (e) {
+      const card = e.target.closest('.blog-card');
+      if (card && !e.target.closest('a')) {
+        // Redirect to the URL defined in the data attribute
+        window.location.href = card.getAttribute('data-url');
+      }
+    });
+  </script>
+{% endblock %}
