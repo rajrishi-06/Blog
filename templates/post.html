@@ -28,6 +28,7 @@
       max-width: 70%;
       text-align: start;
       padding: 20px;
+      z-index:2;
     }
     .hero-title {
       letter-spacing:2px;
@@ -80,12 +81,15 @@
 {% endblock %}
 
 {% block content %}
+  {{ ckeditor.load() }}  <!-- ✅ Load CKEditor -->
+  {{ ckeditor.config(name='comment') }}
   <!-- Hero Section -->
   <header id="hero">
     <div class="hero-content text-start">
       <h1 class="hero-title ">{{ blog_post.title }}</h1>
       <h3 class="hero-subtitle yrsa-text">{{ blog_post.subtitle }}</h3>
-      <p class="hero-para yrsa-text">Posted by {{ blog_post.author }} on {{ blog_post.date }}</p>
+      <p class="hero-para yrsa-text">Written by {{ blog_post.author }}</p>
+      <p class="hero-para yrsa-text">Posted by {{ blog_post.user.name }} on {{ blog_post.date }}</p>
     </div>
   </header>
 
@@ -97,14 +101,63 @@
           {{ blog_post.body | safe }}
         </div>
         <!-- Button wrapped in a div for alignment -->
-        <div class="col-md-8 offset-md-2 text-end">
-            <button class="btn btn-primary custom-btn" onclick="window.location.href='{{ url_for('edit', post_id=blog_post.id )}}'">
-                Edit Post
-            </button>
-        </div>
+        {% if current_user.is_authenticated and (current_user.id == blog_post.user_id or current_user.is_admin) %}
+          <div class="col-md-8 offset-md-2 text-end">
+              <button class="btn btn-primary custom-btn" onclick="window.location.href='{{ url_for('edit', post_id=blog_post.id) }}'">
+                  Edit Post
+              </button>
+          </div>
+        {% endif %}
       </div>
     </div>
   </section>
+  <!--Comments Section-->
+  <section id="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 offset-md-2">
+          <h3 class="yrsa-text">Comments</h3>
+
+          {% if blog_post.comments %}
+            <ul class="list-group">
+              {% for comment in blog_post.comments %}
+                <li class="list-group-item yrsa-text">
+                  <p class="mb-1"><strong>{{ comment.user.name }}</strong> on {{ comment.date }}</p>
+                  <p>{{ comment.text | safe }}</p>  <!-- Enables CKEditor rich text rendering -->
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-muted">No comments yet. Be the first to comment!</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Add Comment Form -->
+      {% if current_user.is_authenticated %}
+      <div class="row mt-4">
+        <div class="col-md-8 offset-md-2">
+          <h4 class="yrsa-text">Add a Comment</h4>
+          <form method="POST">
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+              {{ form.comment.label(class="form-label") }}
+              {{ form.comment(class="form-control") }}  <!-- CKEditor applied here -->
+            </div>
+            {{ form.submit(class="btn btn-success btn-primary custom-btn") }}
+          </form>
+        </div>
+      </div>
+      {% else %}
+      <div class="row mt-4">
+        <div class="col-md-8 offset-md-2 text-center">
+          <p><a class="ml-2" href="{{ url_for('login') }}">Log in</a> or <a href="{{ url_for('register') }}">Register</a> to leave a comment.</p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
 {% endblock %}
 
 {% block scripts %}

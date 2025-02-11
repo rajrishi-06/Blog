@@ -63,7 +63,7 @@
           <h5 class="pt-5 pb-1 fw-bold">
             Want to get in touch or have any queries? Fill out the form below, and I will get in touch with you as soon as possible!
           </h5>
-
+          {% if not current_user.is_authenticated: %}
           <div class="form-group">
             {{ form.name(class="form-control py-3", placeholder="Name") }}
             {% for error in form.name.errors %}
@@ -79,6 +79,7 @@
             {% endfor %}
           </div>
           <hr class="card-separator">
+          {% endif %}
 
           <div class="form-group">
             {{ form.phone(class="form-control py-3", placeholder="Phone Number") }}

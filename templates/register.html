@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %} Register {% endblock %}
+
+{% block head %}
+  <style>
+    .form-control {
+      border: none;
+      border-bottom: 2px solid #ccc;
+      border-radius: 0;
+      font-size: 1.25rem; /* h5 size */
+      padding: 0;
+      margin-top: -8px; /* Align text with the HR line */
+      background: none;
+    }
+
+    .form-control:focus {
+      outline: none;
+      box-shadow: none;
+      border-bottom: 2px solid #007bff;
+    }
+    .card-separator {
+      border: none; /* Make the line clearly visible (blue) */
+      margin: 15px 0; /* Add spacing for better separation */
+    }
+    #hero {
+      background: url("../static/images/telephone_darkened.jpg") no-repeat center center;
+      background-size: cover; /* Ensures the image scales proportionally */
+      width: 100%; /* Stretches to the full width of the container */
+      height: 100vh; /* Takes the full height of the viewport */ /* Set the height to 100% of the viewport height */
+      display: flex;
+      justify-content: center; /* Align content horizontally */
+      align-items: center; /* Align content vertically */
+      position: relative; /* Optional: for positioning elements inside */
+    }
+    .login {
+      padding: 10px;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <!-- Hero Section -->
+  <header id="hero">
+    <div class="px-4 py-5 my-5 text-center">
+      <h1 class="display-5 fw-bold text-increase yrsa-text">REGISTER</h1>
+      <p class="lead mb-4 fw-bold slogan ">Contribute to the BLOG.</p>
+      <div class="col-lg-6 mx-auto">
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center"></div>
+      </div>
+    </div>
+  </header>
+  <!-- Register Form Section -->
+  <section id="contact-form">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 offset-md-2">
+          <form method="POST" action="{{ url_for('register') }}">
+            {{ form.csrf_token }}
+            <hr class="card-separator">
+            <hr class="card-separator">
+            <div class="form-group">
+              {{ form.name(class="form-control py-3", placeholder="Name") }}
+              {% for error in form.name.errors %}
+                <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+            <hr class="card-separator">
+
+            <div class="form-group">
+              {{ form.email(class="form-control py-3", placeholder="Email Address") }}
+              {% for error in form.email.errors %}
+                <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+            <hr class="card-separator">
+
+            <div class="form-group">
+              {{ form.password(class="form-control", rows="4", placeholder="Password goes here") }}
+              {% for error in form.password.errors %}
+                <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+            <hr class="card-separator">
+
+            <div>
+              {{ form.submit(class="btn btn-dark mb-3") }}
+            </div>
+
+          </form>
+        </div>
+      </div>
+      <div class="row login">
+        <div class="col-md-8 offset-md-2 text-center">
+          <p class="yrsa-text">Already have an Account <a href="{{ url_for('login') }}">Login</a> .</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

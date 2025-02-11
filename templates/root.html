@@ -8,7 +8,6 @@
       cursor: pointer;
       border: none; /* Remove borders */
       border-radius: 8px;
-<!--      padding: 15px;-->
       margin-bottom: 10px;
       transition: background-color 0.2s ease, color 0.2s ease; /* Faster transition */
     }
@@ -22,10 +21,6 @@
     .blog-card:hover h1,
     .blog-card:hover h2 {
       color: #007bff; /* Change text color to blue for headings */
-    }
-
-    .blog-card p {
-      color: #333; /* Paragraph text stays the same */
     }
 
     .card-separator {
@@ -44,6 +39,7 @@
       align-items: center; /* Align content vertically */
       position: relative; /* Optional: for positioning elements inside */
     }
+    <!-- This should not be changed  -->
     .custom-btn {
       background-color: #007bff; /* Primary Blue */
       color: white;
@@ -84,11 +80,7 @@
   <!-- Hero Section -->
   <header id="hero">
     <div class="px-4 py-5 my-5 text-center">
-      {% if current_user.is_admin: %}
-        <h1 class="display-5 fw-bold text-increase  yrsa-text">ADMIN</h1>
-      {% else %}
-      <h1 class="display-5 fw-bold text-increase  yrsa-text">{{current_user.name + "'s" }} BLOG</h1>
-      {% endif %}
+      <h1 class="display-5 fw-bold text-increase  yrsa-text">----BLOG----</h1>
       <div class="col-lg-6 mx-auto">
         <p class="lead mb-4 fw-bold slogan text-body-emphasis">"A SPACE FOR EVERY THOUGHT"</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
@@ -107,21 +99,12 @@
         </div>
         <div class="col-md-8 offset-md-2">
           <p class="yrsa-text">Written by {{ blog_post.author }}</p>
-          <p class="yrsa-text">Posted by {{ blog_post.user.name }} on {{ blog_post.date }}.
-            <span class="delete"
-      onclick="window.location.href='{{ url_for('delete', post_id=blog_post.id) }}'">⛌</span>
-          </p>
+          <p class="yrsa-text">Posted by <strong>{{ blog_post.user.name }}</strong> on {{ blog_post.date }}.</p>
           {% if not loop.last %}
           <hr class="card-separator" />
           {% endif %}
         </div>
         {% endfor %}
-        <!-- Button wrapped in a div for alignment -->
-            <div class="col-md-8 offset-md-2 text-end">
-                <button class="btn btn-primary custom-btn" onclick="window.location.href='{{ url_for('make_post') }}'">
-                    Create New Post
-                </button>
-            </div>
       </div>
     </div>
   </section>
