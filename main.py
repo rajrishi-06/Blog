@@ -15,7 +15,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, joinedload, Q
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user
 import os
 from dotenv import load_dotenv
-
+load_dotenv()
 admins = os.getenv("ADMINS")
 
 class ContactForm(FlaskForm):
