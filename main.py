@@ -16,7 +16,9 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, log
 import os
 from dotenv import load_dotenv
 load_dotenv()
-admins = os.getenv("ADMINS")
+admins = set(os.getenv("ADMINS", "{}").replace("{", "").replace("}", "").replace('"', '').split(","))
+admins = {email.strip().lower() for email in admins}
+super_admin = os.getenv('SUPERADMIN')
 
 class ContactForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired(message="Please enter your name.")])
@@ -29,10 +31,16 @@ class Base(DeclarativeBase):
     pass
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "ehbfiubewkb fiubfuwehfu oehu"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///comments.db'
+app.config["SECRET_KEY"] = os.getenv('SECRET')
+
+# Environment-based database configuration:
+if os.getenv("FLASK_ENV") == "production":
+    # Production configuration: Use your production database URI (e.g., PostgreSQL)
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("PROD_DATABASE_URI")
+else:
+    # Local development: Use a SQLite database
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLITE_URL", "sqlite:///local.db")
+
 app.config['CKEDITOR_PKG_TYPE'] = 'full'
 app.config['CKEDITOR_SERVE_LOCAL'] = True
 app.config['CKEDITOR_HEIGHT'] = 200
@@ -40,6 +48,7 @@ ckeditor = CKEditor(app)
 bootstrap = Bootstrap5(app)
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
+
 login_manager = LoginManager()
 login_manager.login_view = "login"
 login_manager.init_app(app)
@@ -65,7 +74,10 @@ class RegisterForm(FlaskForm):
     submit = SubmitField("Sign Me Up")
 
 class LoginForm(FlaskForm):
-    email = EmailField("Email", validators=[DataRequired()])
+    email_or_name = StringField("Name", validators=[
+        DataRequired(),
+        Length(min=3, max=9, message="Username should have a length of 3-9.")
+    ])
     password = PasswordField("Password", validators=[
         DataRequired(),
         Length(min=8, message="Password must be at least 8 characters long."),
@@ -77,6 +89,23 @@ class CommentForm(FlaskForm):
     comment = CKEditorField('Comment')
     submit = SubmitField('Post Comment')
 
+class AdminForm(FlaskForm):
+    email = EmailField("Email", validators=[DataRequired()])
+    add_button = SubmitField("ADD")
+    del_button = SubmitField("DELETE")
+
+class ChangePasswordForm(FlaskForm):
+    old_password = PasswordField("Password", validators=[
+        DataRequired(),
+        Length(min=8, message="Password must be at least 8 characters long."),
+        Regexp(r'^(?=.*[A-Z]).+$', message="Password must contain at least one uppercase letter.")
+    ])
+    new_password = PasswordField("Password", validators=[
+        DataRequired(),
+        Length(min=8, message="Password must be at least 8 characters long."),
+        Regexp(r'^(?=.*[A-Z]).+$', message="Password must contain at least one uppercase letter.")
+    ])
+    submit = SubmitField("Change Password")
 
 class BlogPost(db.Model):
     __tablename__ = "blog_post"
@@ -98,7 +127,7 @@ class User(db.Model, UserMixin):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     email: Mapped[str] = mapped_column(String(100), unique=True)
     password: Mapped[str] = mapped_column(String(100))
-    name: Mapped[str] = mapped_column(String(1000))
+    name: Mapped[str] = mapped_column(String(1000), unique=True)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
     posts = db.relationship("BlogPost", back_populates="user", cascade="all, delete-orphan")
@@ -121,7 +150,10 @@ class Comment(db.Model):
     user = db.relationship("User", back_populates="comments")
     post = db.relationship("BlogPost", back_populates="comments")
 
-
+class Admin(db.Model):
+    __table__name = "admins"
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), unique=True, nullable=False)
 
 with app.app_context():
     db.create_all()
@@ -143,9 +175,6 @@ def get_users_blog_posts():
             return get_blog_posts()  # Admin sees all posts
         elif current_user.is_authenticated:
             return BlogPost.query.options(joinedload(cast(QueryableAttribute, BlogPost.user))).where(BlogPost.user_id == current_user.id).all()
-            # return db.session.execute(
-            #     db.select(BlogPost).where()
-            # ).scalars().all()  # Regular user sees only their own posts
 
 def send_email(message):
     with smtplib.SMTP("smtp.gmail.com") as connection:
@@ -159,7 +188,24 @@ def get_date():
     today = datetime.today().date()
     return f"{monthsList[today.month - 1]} {today.day}, {today.year}"
 
-# Flask-Login user loader
+def super_admin_only(function):
+    def wrapper(*args, **kwargs):
+        if current_user.is_authenticated and current_user.email == super_admin:
+            return function(*args, **kwargs)
+        else:
+            flash("Access denied! Only the Super Admin can perform this action.", "danger")
+            return redirect(url_for('home'))
+    wrapper.__name__ = function.__name__
+    return wrapper
+
+def hash_password(password):
+    hashed_pass = generate_password_hash(
+        password=password,
+        method="pbkdf2:sha256:600000",
+        salt_length=8
+    )
+    return hashed_pass
+
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
@@ -275,32 +321,32 @@ def edit(post_id):
 def login():
     form = LoginForm()
     if request.method == "POST" and form.validate_on_submit():
-        user = db.session.execute(db.select(User).where(User.email == form.email.data.lower())).scalar_one_or_none()
+        user = ( db.session.execute(db.select(User).where(User.email == form.email_or_name.data.lower())).scalar_one_or_none() or
+            db.session.execute(db.select(User).where(User.name == form.email_or_name.data)).scalar_one_or_none() )
+
         if user and check_password_hash(user.password, form.password.data):
             login_user(user, remember=True)
             return redirect(url_for('home'))
         else:
-            flash('Invalid email or password. Please try again.', 'danger')
+            flash('Invalid Username or Email or password. Please try again.', 'danger')
     return render_template('login.html', form=form)
 
 @app.route('/register', methods=["GET", "POST"])
 def register():
     form = RegisterForm()
     if request.method == "POST" and form.validate_on_submit():
-        user_email = form.email.data.lower()
+        user_email = form.email.data.strip().lower()
         if db.session.execute(db.select(User).where(User.email == user_email)).scalar_one_or_none():
             flash('Email already exists. Please log in.', 'warning')
             return redirect(url_for('login'))
-        hashed_and_salted_password = generate_password_hash(
-            password=form.password.data,
-            method="pbkdf2:sha256:600000",
-            salt_length=8
-        )
+        admin_in_env = user_email in admins
+        admin_in_db = Admin.query.filter_by(email=user_email).first() is not None
+        hashed_and_salted_password = hash_password(form.password.data)
         new_user = User(
             name=form.name.data,
             email=user_email.lower(),
             password=hashed_and_salted_password,
-            is_admin=True if user_email in admins else False
+            is_admin=admin_in_db or admin_in_env
         )
         db.session.add(new_user)
         db.session.commit()
@@ -314,7 +360,7 @@ def logout():
     logout_user()
     return redirect(url_for('root'))
 
-
+# you can use this endpoint to search for a particular post eg /search?q=
 @app.route('/search')
 def search():
     query = request.args.get('q', '')
@@ -330,11 +376,8 @@ def search():
         ).limit(5).all()
     else:
         results = []
-
     results_list = []
     for post in results:
-        # Determine which author name to display.
-        # Use the stored author field if present, otherwise use the user's name.
         author_display = post.author if post.author else (post.user.name if post.user else 'Unknown')
         results_list.append({
             'id': post.id,
@@ -343,6 +386,73 @@ def search():
             'url': url_for('blog', post_id=post.id)  # Ensure this endpoint exists.
         })
     return jsonify(results_list)
+
+@app.route('/admin-changes', methods=["GET", "POST"])
+@login_required
+@super_admin_only
+def add_or_del_admins():
+    form = AdminForm()
+    print("working")
+    if request.method == "POST" and form.validate_on_submit():
+
+        email = form.email.data.strip().lower()
+        admin_in_env = email in admins
+        admin_in_db = Admin.query.filter_by(email=email).first() is not None
+        msg = ''
+
+        if form.add_button.data:
+            if admin_in_env or admin_in_db:
+                msg = "User is already an admin."
+            else:
+                new_admin = Admin(email=email)
+                db.session.add(new_admin)
+                db.session.commit()
+                msg = f"User {email} is added as an admin."
+
+        elif form.del_button.data:
+            if admin_in_env:
+                msg = "Cannot remove an admin from the .env file!"
+            elif admin_in_db:
+                admin_entry = Admin.query.filter_by(email=email).first()
+                db.session.delete(admin_entry)
+                admin_user = db.session.execute(db.select(User).where(User.email == email)).scalar()
+                admin_user.is_admin = False
+                db.session.commit()
+                msg = f"User {email} has been removed from admin list."
+            else:
+                msg = "User is not an admin."
+
+        home_url = url_for('home')
+        return f"""
+            <html>
+            <head>
+                <title>Admin Status</title>
+                <style>
+                    body {{ display: flex; height: 100vh; flex-direction: column; justify-content: center; align-items: center;}}
+                    h1 {{ font-size: 36px; color: red; }}
+                    
+                </style>
+            </head>
+            <body>
+                <h1>{msg}</h1><br>
+                <p>Go to<a href="{home_url}" > HOME</a> .</p>
+            </body>
+            </html>
+        """
+    return render_template("superadmin.html", form=form)
+
+@app.route('/profile', methods=["GET", 'POST'])
+@login_required
+def profile():
+    form = ChangePasswordForm()
+    if form.validate_on_submit() and request.method == "POST":
+        if check_password_hash(current_user.password, form.old_password.data):
+            new_hashed_and_salted_pass = hash_password(form.new_password.data)
+            user = User.query.filter_by(email=current_user.email).first()
+            user.password = new_hashed_and_salted_pass
+            db.session.commit()
+        return redirect(url_for('home'))
+    return render_template('profile.html', form=form)
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header id="hero">
+    <div class="px-4 py-5 my-5 text-center">
+        <h1 class="display-5 fw-bold text-increase yrsa-text">Well, you are the Super Admin</h1>
+        <div class="col-lg-6 mx-auto">
+            <p class="lead mb-4 fw-bold slogan text-body-emphasis">"Just add someone you can <u>TRUST</u>"</p>
+        </div>
+    </div>
+</header>
+
+<section id="blogs">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2 blog-card">
+                <form method="POST" action="{{ url_for('add_or_del_admins') }}">
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        {{ form.email.label(class="form-label") }}
+                        {{ form.email(class="form-control") }}
+                    </div>
+
+                    <div class="mb-3 text-center">
+                        {{ form.add_button(class="btn btn-success mr-3", type="submit") }}
+                        {{ form.del_button(class="btn btn-danger ml-3", type="submit") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

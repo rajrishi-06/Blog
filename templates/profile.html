@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+  <!-- Hero Section -->
+  <header id="hero">
+    <div class="px-4 py-5 my-5 text-center">
+      {% if current_user.is_admin: %}
+        <h1 class="display-5 fw-bold text-increase  yrsa-text">ADMIN</h1>
+      {% else %}
+      <h1 class="display-5 fw-bold text-increase  yrsa-text">{{current_user.name + "'s" }} BLOG</h1>
+      {% endif %}
+      <div class="col-lg-12 mx-auto">
+        <p class="lead mb-4 fw-bold slogan text-body-emphasis">"A SPACE FOR EVERY THOUGHT"</p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        </div>
+      </div>
+    </div>
+  </header>
+  <section id="blogs">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 offset-md-2 blog-card">
+          <form method="POST">
+            {{ form.hidden_tag() }}
+            {{ form.csrf_token }}
+            <h5 class="yrsa-text" >Username: {{ current_user.name }}</h5>
+            <h5 class="yrsa-text" >Email: {{ current_user.email }}</h5>
+            <div class="mt-3">
+              {{ form.old_password(class="form-control",placeholder="OLD password" ) }}
+            </div>
+            <div class="mt-3">
+                {{ form.new_password(class="form-control",placeholder="NEW password" ) }}
+            </div>
+            <div class="text-end custom-btn mt-3">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

@@ -23,7 +23,7 @@
       margin: 15px 0; /* Add spacing for better separation */
     }
     #hero {
-      background: url("../static/images/telephone_darkened.jpg") no-repeat center center;
+      background: url("../static/images/register.jpg") no-repeat center center;
       background-size: cover; /* Ensures the image scales proportionally */
       width: 100%; /* Stretches to the full width of the container */
       height: 100vh; /* Takes the full height of the viewport */ /* Set the height to 100% of the viewport height */
@@ -35,6 +35,7 @@
     .login {
       padding: 10px;
     }
+
   </style>
 {% endblock %}
 
@@ -59,7 +60,7 @@
             <hr class="card-separator">
             <hr class="card-separator">
             <div class="form-group">
-              {{ form.name(class="form-control py-3", placeholder="Name") }}
+              {{ form.name(class="form-control py-3", placeholder="Username") }}
               {% for error in form.name.errors %}
                 <span class="text-danger">{{ error }}</span>
               {% endfor %}

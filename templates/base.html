@@ -29,7 +29,7 @@
     <div class="collapse navbar-collapse justify-content-end" id="navbar1">
       <ul class="navbar-nav">
         <li class="nav-item active">
-          <a class="nav-link" href="{{ url_for('root' if current_user.is_authenticated else 'root') }}">HOME</a>
+          <a class="nav-link" href="{{ url_for('home' if  current_user.is_admin else 'root') }}">HOME</a>
         </li>
         {% if not current_user.is_authenticated: %}
         <li class="nav-item active">
@@ -38,10 +38,6 @@
         <li class="nav-item active">
           <a class="nav-link" href="{{ url_for('register') }}">REGISTER</a>
         </li>
-        {% else %}
-          <li class="nav-item active">
-            <a class="nav-link" href="{{ url_for('home') }}">DASHBOARD</a>
-          </li>
         {% endif %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('about') }}">ABOUT DEV</a>
@@ -50,8 +46,20 @@
           <a class="nav-link" href="{{ url_for('contact') }}">CONTACT</a>
         </li>
         {% if current_user.is_authenticated: %}
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('logout') }}">LOG OUT</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="https://www.flaticon.com/free-icons/settings" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            SETTINGS
+          </a>
+
+          <ul class="dropdown-menu " aria-labelledby="navbarDropdownMenuLink">
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('profile') }}">PROFILE</a></li>
+            {% if not current_user.is_admin %}
+              <li class="nav-item active">
+                <a class="nav-link" href="{{ url_for('home') }}">DASHBOARD</a>
+              </li>
+            {% endif %}
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">LOG OUT</a></li>
+          </ul>
         </li>
         {% endif %}
       </ul>
