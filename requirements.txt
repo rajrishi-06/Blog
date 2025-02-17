@@ -11,3 +11,4 @@ email-validator==2.1.0.post1
 SQLAlchemy==2.0.37
 WTForms==3.0.1
 DateTime==5.5
+psycopg2-binary==2.9.10
