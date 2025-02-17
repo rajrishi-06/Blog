@@ -6,7 +6,6 @@ from wtforms import StringField, TextAreaField, SubmitField, PasswordField, Emai
 from wtforms.fields.simple import BooleanField
 from wtforms.validators import DataRequired, Email, Length, Regexp, ValidationError
 from flask_ckeditor import CKEditorField,CKEditor
-from flask_bootstrap import Bootstrap5
 import bleach
 from datetime import datetime
 from flask import Flask, render_template, request, url_for, redirect, flash,  jsonify
@@ -45,17 +44,17 @@ if os.getenv("FLASK_ENV") == "production":
     # Production configuration: Use your production database URI (e.g., PostgreSQL)
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("PROD_DATABASE_URI")
 
-  # Optional, but recommended
+
+# Optional, but recommended
 else:
-    # Local development: Use a SQLite database
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLITE_URL", "sqlite:///local.db")
+    # Local development: Use a SQLite database+
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLITE_URL", "sqlite:///local_new.db")
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['CKEDITOR_PKG_TYPE'] = 'full'
 app.config['CKEDITOR_SERVE_LOCAL'] = True
 app.config['CKEDITOR_HEIGHT'] = 200
 ckeditor = CKEditor(app)
-bootstrap = Bootstrap5(app)
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
