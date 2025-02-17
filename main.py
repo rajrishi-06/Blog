@@ -3,7 +3,8 @@ from typing import cast
 from sqlalchemy import Integer, String, Text, Boolean, or_
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SubmitField, PasswordField, EmailField
-from wtforms.validators import DataRequired, Email, Length, Regexp
+from wtforms.fields.simple import BooleanField
+from wtforms.validators import DataRequired, Email, Length, Regexp, ValidationError
 from flask_ckeditor import CKEditorField,CKEditor
 from flask_bootstrap import Bootstrap5
 import bleach
@@ -15,10 +16,16 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, joinedload, Q
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user
 import os
 from dotenv import load_dotenv
+from flask_login import current_user
+
 load_dotenv()
 admins = set(os.getenv("ADMINS", "{}").replace("{", "").replace("}", "").replace('"', '').split(","))
 admins = {email.strip().lower() for email in admins}
 super_admin = os.getenv('SUPERADMIN')
+
+def no_whitespace(form, field):
+    if " " in field.data:
+        raise ValidationError("No spaces allowed in the username.")
 
 class ContactForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired(message="Please enter your name.")])
@@ -37,10 +44,13 @@ app.config["SECRET_KEY"] = os.getenv('SECRET')
 if os.getenv("FLASK_ENV") == "production":
     # Production configuration: Use your production database URI (e.g., PostgreSQL)
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("PROD_DATABASE_URI")
+
+  # Optional, but recommended
 else:
     # Local development: Use a SQLite database
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLITE_URL", "sqlite:///local.db")
 
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['CKEDITOR_PKG_TYPE'] = 'full'
 app.config['CKEDITOR_SERVE_LOCAL'] = True
 app.config['CKEDITOR_HEIGHT'] = 200
@@ -60,11 +70,16 @@ class NewPostForm(FlaskForm):
     author = StringField("Author")
     img_url = StringField("Background Image URL", validators=[DataRequired()])
     body = CKEditorField('Body')
+    visibility = BooleanField("Visibility", default=False)
     submit = SubmitField("Submit Post")
 
 
 class RegisterForm(FlaskForm):
-    name = StringField("Name", validators=[DataRequired()])
+    name = StringField("Name", validators=[
+        DataRequired(),
+        Length(min=3, max=15, message="Username should have a length of 3-9."),
+        no_whitespace
+    ])
     email = EmailField("Email", validators=[DataRequired()])
     password = PasswordField("Password", validators=[
         DataRequired(),
@@ -74,10 +89,7 @@ class RegisterForm(FlaskForm):
     submit = SubmitField("Sign Me Up")
 
 class LoginForm(FlaskForm):
-    email_or_name = StringField("Name", validators=[
-        DataRequired(),
-        Length(min=3, max=9, message="Username should have a length of 3-9.")
-    ])
+    email_or_name = StringField("Name", validators=[DataRequired()])
     password = PasswordField("Password", validators=[
         DataRequired(),
         Length(min=8, message="Password must be at least 8 characters long."),
@@ -95,11 +107,7 @@ class AdminForm(FlaskForm):
     del_button = SubmitField("DELETE")
 
 class ChangePasswordForm(FlaskForm):
-    old_password = PasswordField("Password", validators=[
-        DataRequired(),
-        Length(min=8, message="Password must be at least 8 characters long."),
-        Regexp(r'^(?=.*[A-Z]).+$', message="Password must contain at least one uppercase letter.")
-    ])
+    old_password = PasswordField("Password", validators=[DataRequired()])
     new_password = PasswordField("Password", validators=[
         DataRequired(),
         Length(min=8, message="Password must be at least 8 characters long."),
@@ -116,6 +124,7 @@ class BlogPost(db.Model):
     body: Mapped[str] = mapped_column(Text, nullable=False)
     author: Mapped[str] = mapped_column(String(250), nullable=False)
     img_url: Mapped[str] = mapped_column(String(250), nullable=False)
+    visibility: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     user_id: Mapped[int] = mapped_column(Integer, db.ForeignKey("user.id"), nullable=False)
 
     user = db.relationship("User", back_populates="posts")
@@ -167,7 +176,6 @@ def get_blog_posts():
         posts = BlogPost.query.options(joinedload(cast(QueryableAttribute, BlogPost.user))).all()
         return posts
 
-from flask_login import current_user
 
 def get_users_blog_posts():
     with app.app_context():
@@ -280,7 +288,8 @@ def make_post():
             img_url=form.img_url.data,
             author=form.author.data or current_user.name,
             date=get_date(),
-            user_id= current_user.id
+            user_id= current_user.id,
+            visibility=not form.visibility.data
         )
         db.session.add(new_post)
         db.session.commit()
@@ -302,13 +311,15 @@ def delete():
 def edit(post_id):
     post = BlogPost.query.get_or_404(post_id)  # Fetch the post from the database
     form = NewPostForm(obj=post)  # Prepopulate form with post data
-
+    if request.method == "GET":
+        form.visibility.data = not post.visibility
     if form.validate_on_submit():
         post.title = form.title.data
         post.subtitle = form.subtitle.data
         post.author = form.author.data
         post.img_url = form.img_url.data
         post.body = form.body.data
+        post.visibility = not form.visibility.data
         post.date = get_date()
         db.session.commit()
         flash("Post updated successfully!", "success")
@@ -368,6 +379,7 @@ def search():
 
     if query:
         results = BlogPost.query.outerjoin(BlogPost.user).filter(
+            BlogPost.visibility == True,
             or_(
                 BlogPost.title.ilike(f'%{query}%'),
                 BlogPost.author.ilike(f'%{query}%'),
@@ -455,4 +467,4 @@ def profile():
     return render_template('profile.html', form=form)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

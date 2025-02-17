@@ -11,7 +11,7 @@
       font-size: 1.25rem; /* h5 size */
       padding: 0;
       margin-top: -8px; /* Align text with the HR line */
-      background: none;
+      background: #F6F4F0;
     }
 
     .form-control:focus {
@@ -53,56 +53,55 @@
     </div>
   </header>
   <!-- contact form Section -->
-  <!-- Contact Form Section -->
-<section id="contact-form">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-8 offset-md-2">
-        <form method="POST" action="{{ url_for('contact') }}">
-          {{ form.csrf_token }}
-          <h5 class="pt-5 pb-1 fw-bold">
-            Want to get in touch or have any queries? Fill out the form below, and I will get in touch with you as soon as possible!
-          </h5>
-          {% if not current_user.is_authenticated: %}
-          <div class="form-group">
-            {{ form.name(class="form-control py-3", placeholder="Name") }}
-            {% for error in form.name.errors %}
-              <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-          </div>
-          <hr class="card-separator">
+  <section id="contact-form">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 offset-md-2">
+          <form method="POST" action="{{ url_for('contact') }}">
+            {{ form.csrf_token }}
+            <h5 class="pt-5 pb-1 fw-bold">
+              Want to get in touch or have any queries? Fill out the form below, and I will get in touch with you as soon as possible!
+            </h5>
+            {% if not current_user.is_authenticated: %}
+            <div class="form-group">
+              {{ form.name(class="form-control py-3",style="background-color:#F6F4F0;", placeholder="Name") }}
+              {% for error in form.name.errors %}
+                <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+            <hr class="card-separator">
 
-          <div class="form-group">
-            {{ form.email(class="form-control py-3", placeholder="Email Address") }}
-            {% for error in form.email.errors %}
-              <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-          </div>
-          <hr class="card-separator">
-          {% endif %}
+            <div class="form-group">
+              {{ form.email(class="form-control py-3",style="background-color:#F6F4F0;", placeholder="Email Address") }}
+              {% for error in form.email.errors %}
+                <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+            <hr class="card-separator">
+            {% endif %}
 
-          <div class="form-group">
-            {{ form.phone(class="form-control py-3", placeholder="Phone Number") }}
-          </div>
-          <hr class="card-separator">
+            <div class="form-group">
+              {{ form.phone(class="form-control py-3",style="background-color:#F6F4F0;", placeholder="Phone Number") }}
+            </div>
+            <hr class="card-separator">
 
-          <div class="form-group">
-            {{ form.message(class="form-control", rows="4", placeholder="Write Your Message Here !!!") }}
-            {% for error in form.message.errors %}
-              <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-          </div>
-          <hr class="card-separator">
+            <div class="form-group">
+              {{ form.message(class="form-control",style="background-color:#F6F4F0;", rows="4", placeholder="Write Your Message Here !!!") }}
+              {% for error in form.message.errors %}
+                <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+            <hr class="card-separator">
 
-          <div>
-            {{ form.submit(class="btn btn-dark mb-3") }}
-          </div>
-        </form>
+            <div>
+              {{ form.submit(class="btn btn-dark mb-3") }}
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
-</section>
-{% endblock %}
+  </section>
+  {% endblock %}
 
 {% block scripts %}
 <!--no scripts-->

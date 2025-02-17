@@ -110,6 +110,11 @@
               <p class="yrsa-text">Posted by {{ blog_post.user.name }} on {{ blog_post.date }}.
                 <span class="delete" onclick="window.location.href='{{ url_for('delete', post_id=blog_post.id) }}'">⛌</span>
               </p>
+              {% if blog_post.visibility %}
+              <p class="yrsa-text" style="color:green">PUBLIC</p>
+              {% else %}
+              <p class="yrsa-text" style="color:red">PRIVATE</p>
+              {% endif %}
               {% if not loop.last %}
                 <hr class="card-separator" />
               {% endif %}

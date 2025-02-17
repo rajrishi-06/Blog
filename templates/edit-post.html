@@ -43,42 +43,57 @@
         <div class="row">
             <div class="col-md-8 offset-md-2 blog-card">
                 <form method="POST">
-                    {{ form.hidden_tag() }}
+                  {{ form.hidden_tag() }}
 
-                    <!-- Title Field -->
-                    <div class="mb-3">
-                        {{ form.title.label(class="form-label custom-label") }}
-                        {{ form.title(class="form-control") }}
+                  <!-- Title Field -->
+                  <div class="mb-3">
+                      {{ form.title.label(class="form-label custom-label") }}
+                      {{ form.title(class="form-control") }}
+                  </div>
+
+                  <!-- Subtitle Field -->
+                  <div class="mb-3">
+                      {{ form.subtitle.label(class="form-label custom-label") }}
+                      {{ form.subtitle(class="form-control") }}
+                  </div>
+
+                  <!-- Author Field -->
+                  <div class="mb-3">
+                    <div>
+                      {{ form.author.label(class="form-label custom-label") }}
+                      {{ form.author(class="form-control", placeholder="optional") }}
                     </div>
 
-                    <!-- Subtitle Field -->
-                    <div class="mb-3">
-                        {{ form.subtitle.label(class="form-label custom-label") }}
-                        {{ form.subtitle(class="form-control") }}
-                    </div>
+                  </div>
+                  <!-- Visibility Checkbox -->
+                  <div class="mb-3">
+                    <div>
 
-                    <!-- Author Field -->
-                    <div class="mb-3">
-                        {{ form.author.label(class="form-label custom-label") }}
-                        {{ form.author(class="form-control") }}
+                      {{ form.visibility(class="form-check-input mt-2 mr-2") }}
+                      <label class="form-check-label form-label custom-label" for="visibilityCheckbox">
+                          Private Post
+                      </label>
                     </div>
+                  </div>
 
-                    <!-- Image URL Field -->
-                    <div class="mb-3">
-                        {{ form.img_url.label(class="form-label custom-label") }}
-                        {{ form.img_url(class="form-control") }}
-                    </div>
+                  <!-- Image URL Field -->
+                  <div class="mb-3">
+                      {{ form.img_url.label(class="form-label custom-label") }}
+                      {{ form.img_url(class="form-control", placeholder="Choose related image!!!") }}
+                  </div>
 
-                    <!-- CKEditor Body Field -->
-                    <div class="mb-3">
-                        {{ form.body.label(class="form-label custom-label") }}
-                        {{ form.body(class="form-control") }}
-                    </div>
+                  <!-- CKEditor Body Field -->
+                  <div class="mb-3">
+                      {{ form.body.label(class="form-label custom-label") }}
+                      {{ form.body(class="form-control") }}
+                  </div>
 
-                    <!-- Submit Button -->
-                    <div class="text-end custom-btn mb-4">
-                        {{ form.submit(class="btn btn-primary") }}
-                    </div>
+
+
+                  <!-- Submit Button -->
+                  <div class="text-end custom-btn mb-4">
+                      {{ form.submit(class="btn btn-primary") }}
+                  </div>
                 </form>
             </div>
         </div>

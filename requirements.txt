@@ -10,3 +10,4 @@ email-validator
 SQLAlchemy
 WTForms
 Werkzeug
+gunicorn==21.2.0

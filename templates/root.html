@@ -94,17 +94,19 @@
       <div class="row">
         {% if posts %}
           {% for blog_post in posts %}
-            <div class="col-md-8 offset-md-2">
-              <div class="blog-card" data-url="{{ url_for('blog', post_id=blog_post.id ) }}" ><h1 class="fw-bold">{{ blog_post.title }}</h1>
-              <h2 class="yrsa-text">{{ blog_post.subtitle }}</h2></div>
-            </div>
-            <div class="col-md-8 offset-md-2">
-              <p class="yrsa-text">Written by {{ blog_post.author }}</p>
-              <p class="yrsa-text">Posted by <strong>{{ blog_post.user.name }}</strong> on {{ blog_post.date }}.</p>
-              {% if not loop.last %}
-              <hr class="card-separator" />
-              {% endif %}
-            </div>
+            {% if blog_post.visibility %}
+              <div class="col-md-8 offset-md-2">
+                <div class="blog-card" data-url="{{ url_for('blog', post_id=blog_post.id ) }}" ><h1 class="fw-bold">{{ blog_post.title }}</h1>
+                <h2 class="yrsa-text">{{ blog_post.subtitle }}</h2></div>
+              </div>
+              <div class="col-md-8 offset-md-2">
+                <p class="yrsa-text">Written by {{ blog_post.author }}</p>
+                <p class="yrsa-text">Posted by <strong>{{ blog_post.user.name }}</strong> on {{ blog_post.date }}.</p>
+                {% if not loop.last %}
+                  <hr class="card-separator" />
+                {% endif %}
+              </div>
+            {% endif %}
           {% endfor %}
         {% else %}
           <!-- Message when no posts exist -->
