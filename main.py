@@ -163,8 +163,8 @@ class Admin(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True, nullable=False)
 
-# with app.app_context():
-#     db.create_all()
+with app.app_context():
+    db.create_all()
 
 my_email = os.getenv("EMAIL")  # your email
 my_email_password = os.getenv("EMAIL_PASSWORD")
