@@ -467,4 +467,4 @@ def profile():
     return render_template('profile.html', form=form)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
