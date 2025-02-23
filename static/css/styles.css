@@ -288,6 +288,9 @@ a[href*="github"]:hover i {
   .search-container {
     margin-left: 0px;
   }
+  .navbar-brand {
+    margin-right: 0px;
+  }
 }
 @media (max-width: 768px){
   .search-container {
@@ -312,4 +315,12 @@ a[href*="github"]:hover i {
 #contact-form{
     background-color: #F6F4F0;
     padding-bottom:50px;
+}
+@media (min-width: 300px) and (max-width: 550px){
+  .search-container {
+    margin-right:0px;
+  }
+  #navbar .container{
+    padding: 0;
+  }
 }
