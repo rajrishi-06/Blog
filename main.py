@@ -465,5 +465,10 @@ def profile():
         return redirect(url_for('home'))
     return render_template('profile.html', form=form)
 
+@app.route('/ping')
+def ping():
+    return 'PONG', 200  # or return jsonify({'status': 'ok'}), 200
+
+
 if __name__ == "__main__":
     app.run()
